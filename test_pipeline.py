@@ -23,4 +23,4 @@ test_data = {
 result = pipeline(test_data['data'])
 
 # Print the result
-# print(result)
+print(result)
