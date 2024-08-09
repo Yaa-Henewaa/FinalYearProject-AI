@@ -30,7 +30,18 @@ vectorizer = joblib.load('tfidf_vectorizer.pkl')
 
 @app.get("/")
 async def read_root():
-    return {"message": "Hello, World!"}
+    return {
+        "message": "Welcome to the Text Categorization and Summarization API!",
+        "endpoints": {
+            "/": "GET - This message",
+            "/predict": "POST - Submit text data for categorization and summarization",
+        },
+        "description": "This API allows you to categorize text into predefined categories and summarize it using LSA.",
+        "model_info": {
+            "model_type": "Naive Bayes",
+            "vectorizer": "TF-IDF",
+        }
+    }
 
 @app.post("/")
 async def predict(data: dict):
