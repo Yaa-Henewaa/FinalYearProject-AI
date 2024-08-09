@@ -43,7 +43,7 @@ async def read_root():
         }
     }
 
-@app.post("/")
+@app.post("/predict")
 async def predict(data: dict):
     try:
         result = pipeline(data['data'])
