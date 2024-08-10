@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import nltk
-# nltk.download('punkt')  
+nltk.download('punkt')  
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
