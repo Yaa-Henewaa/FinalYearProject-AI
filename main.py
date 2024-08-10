@@ -20,6 +20,16 @@ import string
 from scipy.sparse import hstack
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.decomposition import TruncatedSVD
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
+nltk.download()
 
 class TextData(BaseModel):
     data: str
@@ -28,7 +38,8 @@ class TextData(BaseModel):
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["*"],
+    allow_credentials=True,  
     allow_methods=["*"],
     allow_headers=["*"],
 )
