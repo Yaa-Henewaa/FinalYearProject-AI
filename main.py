@@ -36,6 +36,7 @@ nltk_data_dir = 'C:/Users/HP/Desktop/Server/nltk_data'
 os.makedirs(nltk_data_dir, exist_ok=True)   
 nltk.download('punkt', download_dir=nltk_data_dir)
 nltk.download('stopwords', download_dir=nltk_data_dir)
+nltk.data.path.append(nltk_data_dir)
 
 os.environ['NLTK_DATA'] = 'C:/Users/HP/Desktop/Server/nltk_data'
 
