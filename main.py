@@ -7,6 +7,7 @@ import joblib
 import pandas as pd
 import nltk
 nltk.download('punkt')
+nltk.download('stopwords')
 from pathlib import Path
 import os
 import numpy as np
