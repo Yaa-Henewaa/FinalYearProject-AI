@@ -6,6 +6,7 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import nltk
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
@@ -29,8 +30,16 @@ else:
     ssl._create_default_https_context = _create_unverified_https_context
 
 
-nltk.download('punkt')  
-nltk.download()
+# nltk.download('punkt')  
+nltk.download('punkt', download_dir='C:/Users/HP/Desktop/Server/nltk_data')
+
+# Set the NLTK data path
+nltk_data_path = Path(__file__).parent / 'nltk_data'
+nltk.data.path.append(str(nltk_data_path))
+
+# Ensure 'punkt' is available
+if 'punkt' not in nltk.data.path:
+    nltk.download('punkt', download_dir=str(nltk_data_path))
 
 class TextData(BaseModel):
     data: str
