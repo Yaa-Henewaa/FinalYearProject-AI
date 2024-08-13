@@ -31,7 +31,7 @@ except AttributeError:
     pass
 else:
     ssl._create_default_https_context = _create_unverified_https_context
-# nltk.download() 
+nltk.download() 
 nltk_data_dir = 'C:/Users/HP/Desktop/Server/nltk_data'
 os.makedirs(nltk_data_dir, exist_ok=True)   
 nltk.download('punkt', download_dir=nltk_data_dir)
