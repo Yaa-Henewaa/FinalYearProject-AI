@@ -7,7 +7,7 @@ import joblib
 import pandas as pd
 import nltk
 nltk.download('punkt')
-nltk.download('stopwords')
+# nltk.download('stopwords')
 from pathlib import Path
 import os
 import numpy as np
@@ -17,7 +17,7 @@ from spacy.lang.en.stop_words import STOP_WORDS
 from string import punctuation
 import json
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import string
 from scipy.sparse import hstack
@@ -35,7 +35,7 @@ nltk.download()
 nltk_data_dir = 'C:/Users/HP/Desktop/Server/nltk_data'
 os.makedirs(nltk_data_dir, exist_ok=True)   
 nltk.download('punkt', download_dir=nltk_data_dir)
-nltk.download('stopwords', download_dir=nltk_data_dir)
+# nltk.download('stopwords', download_dir=nltk_data_dir)
 nltk.download('wordnet', download_dir=nltk_data_dir)
 nltk.data.path.append(nltk_data_dir)
 
@@ -186,7 +186,7 @@ def preprocess_text(text):
     tokens = word_tokenize(text.lower())
 
     # Remove stopwords and punctuation
-    stop_words = set(stopwords.words('english'))
+    # stop_words = set(stopwords.words('english'))
     tokens = [word for word in tokens if word.isalpha() and word not in stop_words]
 
     # Lemmatization
