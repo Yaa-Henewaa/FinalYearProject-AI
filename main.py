@@ -29,11 +29,12 @@ except AttributeError:
     pass
 else:
     ssl._create_default_https_context = _create_unverified_https_context
+nltk.download()    
 
 
 # nltk.download('punkt')  
 nltk.download('punkt', download_dir='C:/Users/HP/Desktop/Server/nltk_data')
-
+nltk.download('stopwords')
 
 
 class TextData(BaseModel):
