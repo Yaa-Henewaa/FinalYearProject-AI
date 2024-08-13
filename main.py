@@ -41,6 +41,8 @@ nltk.download('wordnet', download_dir=nltk_data_dir)
 # nltk.data.path.append(nltk_data_dir)
 
 os.environ['NLTK_DATA'] = 'C:/Users/HP/Desktop/Server/nltk_data'
+nltk.download('stopwords', download_dir='/opt/render/nltk_data')
+nltk.download('punkt', download_dir='/opt/render/nltk_data')
 
 
 class TextData(BaseModel):
