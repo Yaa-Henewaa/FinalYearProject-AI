@@ -7,6 +7,7 @@ import joblib
 import pandas as pd
 import nltk
 from pathlib import Path
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
@@ -34,12 +35,14 @@ else:
 nltk.download('punkt', download_dir='C:/Users/HP/Desktop/Server/nltk_data')
 
 # Set the NLTK data path
-nltk_data_path = Path(__file__).parent / 'nltk_data'
-nltk.data.path.append(str(nltk_data_path))
+nltk_data_path = '/opt/render/nltk_data'
+if not os.path.exists(nltk_data_path):
+    os.makedirs(nltk_data_path)
+nltk.data.path.append(nltk_data_path)
 
 # Ensure 'punkt' is available
 if 'punkt' not in nltk.data.path:
-    nltk.download('punkt', download_dir=str(nltk_data_path))
+    nltk.download('punkt', download_dir=nltk_data_path)
 
 class TextData(BaseModel):
     data: str
