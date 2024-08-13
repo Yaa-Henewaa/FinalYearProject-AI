@@ -31,23 +31,9 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 # nltk.download()    
+nltk.download('punkt', download_dir='C:/Users/HP/Desktop/Server/nltk_data')
 
-
-# nltk.download('punkt')  
-# nltk.download('punkt', download_dir='C:/Users/HP/Desktop/Server/nltk_data')
-
-# Set the NLTK data path
-nltk_data_path = '/opt/render/nltk_data'
-if not os.path.exists(nltk_data_path):
-    os.makedirs(nltk_data_path)
-nltk.data.path.append(nltk_data_path)
-
-# Ensure 'punkt' is available
-if 'punkt' not in nltk.data.path:
-    nltk.download('punkt', download_dir=nltk_data_path)
-
-
-os.environ['NLTK_DATA'] = '/opt/render/nltk_data'
+os.environ['NLTK_DATA'] = 'C:/Users/HP/Desktop/Server/nltk_data'
 
 
 class TextData(BaseModel):
