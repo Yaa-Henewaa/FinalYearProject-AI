@@ -33,9 +33,10 @@ nltk.download()
 
 
 # nltk.download('punkt')  
-nltk.download('punkt', download_dir='C:/Users/HP/Desktop/Server/nltk_data')
+# nltk.download('punkt', download_dir='C:/Users/HP/Desktop/Server/nltk_data')
 nltk.download('stopwords')
 nltk.download('punkt')
+os.environ['NLTK_DATA'] = '/opt/render/nltk_data'
 
 
 class TextData(BaseModel):
