@@ -6,7 +6,6 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import nltk
-nltk.download('punkt')  
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
@@ -29,6 +28,8 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
+
+nltk.download('punkt')  
 nltk.download()
 
 class TextData(BaseModel):
