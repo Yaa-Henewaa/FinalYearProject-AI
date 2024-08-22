@@ -32,17 +32,16 @@ except AttributeError:
     pass
 else:
     ssl._create_default_https_context = _create_unverified_https_context
-nltk.download() 
+  
+
+# nltk.download() 
 nltk_data_dir = 'C:/Users/HP/Desktop/Server/nltk_data'
 os.makedirs(nltk_data_dir, exist_ok=True)   
 nltk.download('punkt', download_dir=nltk_data_dir)
 nltk.download('stopwords', download_dir=nltk_data_dir)
-nltk.download('wordnet', download_dir=nltk_data_dir)
-# nltk.data.path.append(nltk_data_dir)
 
 os.environ['NLTK_DATA'] = 'C:/Users/HP/Desktop/Server/nltk_data'
-nltk.download('stopwords', download_dir='/opt/render/nltk_data')
-nltk.download('punkt', download_dir='/opt/render/nltk_data')
+
 
 
 class TextData(BaseModel):
@@ -57,8 +56,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-model = joblib.load('NBmodel.pkl')
-vectorizer = joblib.load('tfidf_vectorizer.pkl')
+model = joblib.load('LoRmodel.pkl')
+vectorizer = joblib.load('tfidfLoR_vectorizer.pkl') 
 
 @app.get("/")
 async def read_root():
@@ -91,7 +90,8 @@ if __name__ == '__main__':
 def pipeline(text):
     p = heading(text)
     df_filtered = categorizing(p)
-    df_filtered.loc[:, 'cleaned_text'] = df_filtered['Text'].apply(preprocess_text)
+    df_filtered = df_filtered.copy()
+    df_filtered['cleaned_text'] = df_filtered['Text'].apply(preprocess_text)
     df_filtered = df_filtered.dropna(subset=['cleaned_text'])
     df_filtered = df_filtered[df_filtered['cleaned_text'].str.strip() != '']
     policy_tfidf = vectorizer.transform(df_filtered['cleaned_text'])
