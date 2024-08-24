@@ -6,9 +6,6 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
 from pathlib import Path
 import os
 import numpy as np
@@ -33,15 +30,6 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
   
-
-# nltk.download() 
-nltk_data_dir = 'C:/Users/HP/Desktop/Server/nltk_data'
-os.makedirs(nltk_data_dir, exist_ok=True)   
-nltk.download('punkt', download_dir=nltk_data_dir)
-nltk.download('stopwords', download_dir=nltk_data_dir)
-
-os.environ['NLTK_DATA'] = 'C:/Users/HP/Desktop/Server/nltk_data'
-
 
 
 class TextData(BaseModel):
