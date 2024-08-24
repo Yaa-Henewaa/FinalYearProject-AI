@@ -12,8 +12,8 @@ nltk.download('wordnet')
 from pathlib import Path
 import os
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns; sns.set()
+import spacy
+from spacy.lang.en import English
 from spacy.lang.en.stop_words import STOP_WORDS
 from string import punctuation
 import json
@@ -87,170 +87,83 @@ if __name__ == '__main__':
 
 
 
-def pipeline(text):
-    p = heading(text)
-    df_filtered = categorizing(p)
-    df_filtered = df_filtered.copy()
-    df_filtered['cleaned_text'] = df_filtered['Text'].apply(preprocess_text)
-    df_filtered = df_filtered.dropna(subset=['cleaned_text'])
-    df_filtered = df_filtered[df_filtered['cleaned_text'].str.strip() != '']
-    policy_tfidf = vectorizer.transform(df_filtered['cleaned_text'])
-    df_filtered['predicted_category'] = model.predict(policy_tfidf)
-    summaries = summarize_by_category(df_filtered, 'Text', 'predicted_category', 1)
+def pipeline(document, num_sentences=1):
+    # Split the document into paragraphs
+    paragraphs = document.split('\n\n')  # Adjust delimiter if needed
 
-    result = {}
-    for category, summary in summaries.items():
-        result[category] = summary  
+    # Transform paragraphs into the same format used during training
+    paragraphs_transformed = vectorizer.transform(paragraphs)
 
+    # Predict categories
+    predictions = model.predict(paragraphs_transformed)
 
-    return result
+    # Summarize by category
+    summary_by_category = summarize_by_category(paragraphs, predictions)
+
+    return summary_by_category
 
 
-def heading(text):
-    paragraphs = text.strip().split('\n\n')
-
-    first_sentences = []
-    rest_sentences = []
-
-    for paragraph in paragraphs:
-        sentences = nltk.sent_tokenize(paragraph)
-        valid_first_sentence = ''
-        rest_of_sentences = ''
-        for i, sentence in enumerate(sentences):
-            if any(word.isalpha() for word in sentence.split()):
-                valid_first_sentence = sentence
-                rest_of_sentences = '. '.join(sentences[:i] + sentences[i+1:])
-                break
-        if not valid_first_sentence and sentences:
-            valid_first_sentence = sentences[-1]
-            rest_of_sentences = '. '.join(sentences[:-1])
-
-        first_sentences.append(valid_first_sentence)
-        rest_sentences.append(rest_of_sentences)
-        
-    duplicated_categories = []
-    all_sentences = []
-
-    # Iterate over paragraphs
-    for paragraph_index in range(len(first_sentences)):
-        num_sentences = len(rest_sentences[paragraph_index].split('. '))
-        category = first_sentences[paragraph_index]
-        duplicated_categories.extend([category] * num_sentences)
-        all_sentences.extend(rest_sentences[paragraph_index].split('. '))
 
 
-    df = pd.DataFrame({'Categories': duplicated_categories, 'Text': all_sentences}) 
 
-    return df    
+def lsa_summarize(text, num_sentences=1):
 
 
-def categorizing(df):
-    for index, row in df.iterrows():
-        if "collect" in row['Categories'] or "Collect" in row['Categories']:
-            df.at[index, 'Categories'] = "Data Collection"
-    for index, row in df.iterrows():
-        if "share" in row['Categories'] or "Share" in row['Categories'] or "Sharing" in row ['Categories']:
-            df.at[index, 'Categories'] = "Data Sharing"    
-    for index, row in df.iterrows():
-        if "Rights" in row['Categories'] or "rights" in row['Categories'] or "obligations" in row ['Categories']:
-            df.at[index, 'Categories'] = "Rights and Protection"
-    for index, row in df.iterrows():
-        if "Use" in row['Categories'] or "Usage" in row['Categories'] or "use" in row ['Categories']:
-            df.at[index, 'Categories'] = "Data Usage"       
-    for index, row in df.iterrows():
-        if "Store" in row['Categories'] or "Storage" in row['Categories'] or "store" in row ['Categories']:
-            df.at[index, 'Categories'] = "Data Storage"         
-    for index, row in df.iterrows():
-        if "keep" in row['Categories']:
-            df.at[index, 'Categories'] = "Data Storage"    
-    for index, row in df.iterrows():
-        if "with" in row['Categories']:
-            df.at[index, 'Categories'] = "Data Usage" 
-    for index, row in df.iterrows():
-        if "need" in row['Categories']:
-            df.at[index, 'Categories'] = "Data Collection"     
-    for index, row in df.iterrows():
-        if "Affiliated" in row['Categories']:
-            df.at[index, 'Categories'] = "Data Sharing"                
-    for index, row in df.iterrows():
-        if "Managing" in row['Categories']:
-            df.at[index, 'Categories'] = "Rights and Protection"
-
-    valid_categories = ["Data Collection", "Data Sharing", "Data Storage", "Data Usage", "Rights and Protection"]
-
+    sentences = text.split('.')
+    sentences = [sent.strip() for sent in sentences if sent.strip()]
     
-    df_filtered = df[df['Categories'].isin(valid_categories)]        
-
-    return df_filtered       
-
-def preprocess_text(text):
-    # Tokenization
-    stop_words = list(STOP_WORDS)
-    tokens = word_tokenize(text.lower())
-
-    # Remove stopwords and punctuation
-    stop_words = set(stopwords.words('english'))
-    tokens = [word for word in tokens if word.isalpha() and word not in stop_words]
-
-    # Lemmatization
-    lemmatizer = WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(word) for word in tokens]
-
-    return ' '.join(tokens)
-
-
-
-
-
-def lsa_summarize(df_filtered, text_column, num_sentences):
-    # Split text into individual sentences
-    text = ' '.join(df_filtered[text_column].dropna())
-    
-    # Split text into individual sentences
-    sentences = [sent.strip() for sent in text.split('.') if sent.strip()]
-    
-    # Check if there are enough sentences to summarize
     if len(sentences) <= num_sentences:
-        return '. '.join(sentences)  # Return the entire text if there are not enough sentences
+        return '. '.join(sentences)
     
-    # Create CountVectorizer and TfidfTransformer
     vectorizer = CountVectorizer(stop_words='english')
     X = vectorizer.fit_transform(sentences)
     transformer = TfidfTransformer()
     X_tfidf = transformer.fit_transform(X)
     
-    # Apply LSA (TruncatedSVD)
     svd = TruncatedSVD(n_components=min(num_sentences, X_tfidf.shape[0]-1))
     X_svd = svd.fit_transform(X_tfidf)
     
-    # Determine top sentences based on the highest LSA scores
     top_sentence_indices = np.argsort(X_svd[:, 0])[::-1][:num_sentences]
-    
-    # Sort indices to maintain the original order
     top_sentence_indices = sorted(top_sentence_indices)
     
-    # Generate the summary
     summary = '. '.join([sentences[i] for i in top_sentence_indices])
     
     return summary
 
 
-def summarize_by_category(df, text_column, category_column, num_sentences):
-    # Create a dictionary to store the summaries for each category
-    summaries = {}
+def summarize_by_category(paragraphs, predictions):
+    # Define the categories (if needed for reference)
+    categories = ['Data Collection', 'Data Storage', 'Data Usage', 'Data Sharing', 'Rights and Protection']
 
-    # Get unique categories
-    categories = df[category_column].unique()
-    
+    # Ensure predictions are in list format
+    predictions_labels = predictions.tolist()
+
+    # Create a DataFrame to group paragraphs by category
+    df_paragraphs = pd.DataFrame({'Paragraph': paragraphs, 'Category': predictions_labels})
+
+    summary_by_category = {}
     for category in categories:
-        # Filter texts belonging to the current category
-        df_filtered = df[df[category_column] == category]
+        # Filter paragraphs for the current category
+        filtered_paragraphs = df_paragraphs[df_paragraphs['Category'] == category]['Paragraph']
         
-        # Apply the LSA summarizer to the filtered texts
-        summary = lsa_summarize(df_filtered, text_column, num_sentences)
+        # Combine paragraphs for the category
+        combined_text = ' '.join(filtered_paragraphs)
         
-        # Store the summary in the dictionary
-        summaries[category] = summary
-    
-    return summaries
+        # Generate summary using LSA summarization
+        summary = spacy_summarize(combined_text, num_sentences=1)
+        
+        # Store summary
+        summary_by_category[category] = summary
 
+    return summary_by_category
+
+
+
+
+def spacy_summarize(text, num_sentences = 1):
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text)
+    sentences = list(doc.sents)
+    ranked_sentences = sorted(sentences, key=lambda s: len(s.text), reverse=True)
+    summary = ' '.join([s.text for s in ranked_sentences[:num_sentences]])
+    return summary
