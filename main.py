@@ -5,7 +5,6 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import joblib
 import pandas as pd
-import nltk
 from pathlib import Path
 import os
 import numpy as np
@@ -14,9 +13,6 @@ from spacy.lang.en import English
 from spacy.lang.en.stop_words import STOP_WORDS
 from string import punctuation
 import json
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 import string
 from scipy.sparse import hstack
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
