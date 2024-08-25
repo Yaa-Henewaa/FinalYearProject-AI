@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
 
 
-def pipeline(document, num_sentences=1):
+def pipeline(document):
     # Split the document into paragraphs
     paragraphs = document.split('\n\n')  # Adjust delimiter if needed
 
@@ -84,7 +84,14 @@ def pipeline(document, num_sentences=1):
     # Summarize by category
     summary_by_category = summarize_by_category(paragraphs, predictions)
 
-    return summary_by_category
+    # return summary_by_category
+    result = {}
+
+    for category, summary in summary_by_category.items():
+        result[category] = summary 
+
+    return result
+
 
 
 
