@@ -124,7 +124,7 @@ def lsa_summarize(text, num_sentences=1):
 
 def summarize_by_category(paragraphs, predictions):
     # Define the categories (if needed for reference)
-    categories = ['Data Collection', 'Data Storage', 'Data Usage', 'Data Sharing', 'Rights and Protection']
+    categories = ['Data Collection', 'Data Usage', 'Data Sharing', 'Data Storage', 'Rights and Protection']
 
     # Ensure predictions are in list format
     predictions_labels = predictions.tolist()
