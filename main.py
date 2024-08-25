@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
 def pipeline(document):
     # Split the document into paragraphs
-    paragraphs = document.split('\n\n')  # Adjust delimiter if needed
+    paragraphs = document.strip().split('\n\n')
 
     # Transform paragraphs into the same format used during training
     paragraphs_transformed = vectorizer.transform(paragraphs)
