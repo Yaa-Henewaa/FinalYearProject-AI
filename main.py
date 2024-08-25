@@ -121,6 +121,13 @@ def lsa_summarize(text, num_sentences=1):
     
     return summary
 
+def spacy_summarize(text, num_sentences = 1):
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text)
+    sentences = list(doc.sents)
+    ranked_sentences = sorted(sentences, key=lambda s: len(s.text), reverse=True)
+    summary = ' '.join([s.text for s in ranked_sentences[:num_sentences]])
+    return summary
 
 def summarize_by_category(paragraphs, predictions):
     # Define the categories (if needed for reference)
@@ -151,10 +158,3 @@ def summarize_by_category(paragraphs, predictions):
 
 
 
-def spacy_summarize(text, num_sentences = 1):
-    nlp = spacy.load("en_core_web_sm")
-    doc = nlp(text)
-    sentences = list(doc.sents)
-    ranked_sentences = sorted(sentences, key=lambda s: len(s.text), reverse=True)
-    summary = ' '.join([s.text for s in ranked_sentences[:num_sentences]])
-    return summary
